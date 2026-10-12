@@ -396,7 +396,8 @@ section.tear.torn-done{clip-path:none}
 .film-prog{max-width:1080px;width:calc(100% - 40px);margin:0 auto;height:4px;background:rgba(0,0,0,.15)}
 .film-prog i{display:block;height:100%;width:calc(var(--fp,0) * 100%);background:var(--purple)}
 .film-static .film-sticky{position:static;height:auto!important;overflow:visible}
-.film-static .film{overflow-x:auto;scroll-snap-type:x mandatory}
+.film-static .film{overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.film-static .film::-webkit-scrollbar{display:none}
 .film-static .film .ev{scroll-snap-align:center}
 .film-static .film-prog{display:none}
 @media(max-width:860px){.dossier,.xw-wrap{grid-template-columns:1fr}}
@@ -921,7 +922,7 @@ section.tear.torn-done{clip-path:none}
   var poster=$('.grid-poster'), pin=$('.film-pin'), fstick=$('.film-sticky'), ftrack=$('.film-track'), filmOn=false, fdist=0;
   function filmSize(){
     if(!pin)return;
-    filmOn=!reduce&&innerWidth>700; pin.classList.toggle('film-static',!filmOn);
+    filmOn=!reduce; pin.classList.toggle('film-static',!filmOn);
     if(filmOn){var nh=navEl.offsetHeight;fstick.style.top=nh+'px';fstick.style.height=(innerHeight-nh)+'px';fdist=Math.max(0,ftrack.scrollWidth-innerWidth);pin.style.height=(innerHeight-nh+fdist)+'px'}
     else{pin.style.height='';fstick.style.height='';ftrack.style.transform=''}
   }
