@@ -382,6 +382,18 @@ section.tear.torn-done{clip-path:none}
 /* 14 sound toggle */
 #snd[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 :root:not(.playing) footer svg{animation-play-state:paused}
+#radio{position:fixed;right:18px;bottom:18px;z-index:160;width:min(360px,calc(100vw - 24px));background:#f4eddc;color:#1d1a18;border:2px solid #1d1a18;box-shadow:6px 6px 0 #5a3d6b;padding:10px 10px 8px;transform:translateY(130%) rotate(5deg);opacity:0;visibility:hidden;transition:transform .55s cubic-bezier(.2,1.3,.4,1),opacity .3s,visibility 0s .55s}
+#radio.on{transform:rotate(-1deg);opacity:1;visibility:visible;transition:transform .55s cubic-bezier(.2,1.3,.4,1),opacity .3s}
+#radio::before{content:"";position:absolute;top:-12px;left:50%;width:84px;height:22px;translate:-50% 0;rotate:3deg;background:rgba(240,230,190,.85);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.rd-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.rd-disc{width:38px;height:38px;flex:0 0 auto;animation:spin 3s linear infinite}
+.rd-head b{display:block;font-family:var(--display);font-weight:400;font-size:1.2rem;line-height:1.05}
+.rd-head span{font-family:var(--type);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:#4a443e}
+.rd-x{margin-left:auto;flex:0 0 auto;background:none;border:1.5px solid #1d1a18;width:32px;height:32px;font-size:1.25rem;line-height:1;cursor:pointer;color:#1d1a18;transition:.2s}
+.rd-x:hover{background:#1d1a18;color:#f4eddc}
+.rd-body iframe{display:block;width:100%;height:152px;border:0;border-radius:12px;background:#282828}
+.rd-note{font-family:var(--type);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:#4a443e;margin-top:6px;text-align:center}
+@media(max-width:700px){#radio{right:12px;bottom:12px}}
 
 /* 15 film-strip history */
 .film-head{max-width:1120px;margin:0 auto;padding:0 20px;width:100%}
@@ -540,6 +552,11 @@ section.tear.torn-done{clip-path:none}
   <div class="st-bar"><a class="st-back" href="#projects">&larr; Front page</a><span class="st-mast">The Dhruv Times</span><span id="stNo"></span></div>
   <article class="st-wrap" id="stBody"></article>
 </div>
+<aside id="radio" aria-label="Dhruv FM radio" aria-hidden="true">
+  <div class="rd-head"><svg class="rd-disc" viewBox="0 0 48 48" aria-hidden="true"><use href="#ic-vinyl"/></svg><div><b>Dhruv FM 104.2</b><span>Now playing &middot; lo-fi with lyrics</span></div><button class="rd-x" type="button" aria-label="Turn the radio off">&times;</button></div>
+  <div class="rd-body"></div>
+  <p class="rd-note">Press &#9654; to play &middot; full songs when signed in to Spotify</p>
+</aside>
 <div id="lb" role="dialog" aria-modal="true" aria-label="Certificate viewer" aria-hidden="true">
   <button class="lb-x" type="button" aria-label="Close">&times;</button>
   <button class="lb-nav prev" type="button" aria-label="Previous certificate">&larr;</button>
@@ -975,8 +992,8 @@ section.tear.torn-done{clip-path:none}
     }
     var api={
       get on(){return on},
-      set:function(v){on=v;try{localStorage.setItem('sound',v?'on':'off')}catch(e){}if(v)startMusic();else stopMusic()},
-      wake:function(){if(on&&!timer)startMusic()},
+      set:function(v){on=v},
+      wake:function(){},
       clack:function(){if(!on)return;ac();nz(ctx.currentTime,.03,'bandpass',3000+Math.random()*900,1.2,.14,fxBus)},
       pick:function(){if(!on)return;ac();nz(ctx.currentTime,.06,'bandpass',1100,.8,.1,fxBus)},
       rustle:function(){},
@@ -986,11 +1003,17 @@ section.tear.torn-done{clip-path:none}
     return api;
   })();
   var sndB=$('#snd');
-  function sndUI(){sndB.innerHTML=sfx.on?'Radio: on &#9835;':'Radio: off';sndB.setAttribute('aria-pressed',sfx.on);sndB.title='Lo-fi newsroom radio'}
-  sndUI();
-  sndB.addEventListener('click',function(){sfx.set(!sfx.on);sndUI()});
-  // browsers only allow audio after a user gesture: resume a saved "on" preference at the first interaction
-  ['pointerdown','keydown'].forEach(function(ev){addEventListener(ev,function w(e){if(e.target!==sndB)sfx.wake();removeEventListener(ev,w,true)},true)});
+  // Dhruv FM: official Spotify embed, loaded only when the visitor opens the radio
+  var radio=$('#radio'),rBody=$('.rd-body',radio),SPOTIFY='https://open.spotify.com/embed/playlist/0ViuBxWxVJridg0tYPFTrg?utm_source=generator&theme=0';
+  function sndUI(){var o=radio.classList.contains('on');sndB.innerHTML=o?'Radio: on &#9835;':'Radio: off';sndB.setAttribute('aria-pressed',o)}
+  function radioSet(v){
+    if(v&&!rBody.firstChild){var f=document.createElement('iframe');f.src=SPOTIFY;f.title='Spotify playlist: Dreamy Lofi Songs with Lyrics';f.allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';f.loading='lazy';rBody.appendChild(f)}
+    if(!v)setTimeout(function(){if(!radio.classList.contains('on'))rBody.innerHTML=''},600); // removing the player stops the music
+    radio.classList.toggle('on',v);radio.setAttribute('aria-hidden',!v);root2.classList.toggle('playing',v);sfx.set(v);sndUI();
+  }
+  sfx.set(false);sndUI();
+  sndB.addEventListener('click',function(){radioSet(!radio.classList.contains('on'))});
+  $('.rd-x',radio).addEventListener('click',function(){radioSet(false)});
 
   // scroll-linked: sticker parallax + drag, fold-out page, film reel
   var stk=$$('.sticker').map(function(el,k){return {el:el,par:el.parentElement,f:el.dataset.np?0:(0.05+(k%4)*0.025)*(k%2?-1:1),py:0,dx:0,dy:0,vx:0,vy:0,flag:el.dataset.flag?$('#'+el.dataset.flag):null}}), ticking=false;
