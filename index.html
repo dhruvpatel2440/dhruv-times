@@ -380,9 +380,6 @@ section.tear.in{clip-path:polygon(-5% -80px,105% -80px,105% calc(100% + 80px),95
 section.tear.torn-done{clip-path:none}
 
 /* 14 sound toggle */
-#snd[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
-:root:not(.playing) footer svg{animation-play-state:paused}
-.toast{position:fixed;left:50%;bottom:22px;z-index:180;translate:-50% 0;background:#1d1a18;color:#f4eddc;font-family:var(--type);font-size:.78rem;letter-spacing:.06em;padding:8px 14px;border:2px solid #f4eddc;box-shadow:4px 4px 0 #5a3d6b;animation:fade .25s;max-width:calc(100vw - 24px);text-align:center}
 
 /* 15 film-strip history */
 .film-head{max-width:1120px;margin:0 auto;padding:0 20px;width:100%}
@@ -541,7 +538,6 @@ section.tear.torn-done{clip-path:none}
   <div class="st-bar"><a class="st-back" href="#projects">&larr; Front page</a><span class="st-mast">The Dhruv Times</span><span id="stNo"></span></div>
   <article class="st-wrap" id="stBody"></article>
 </div>
-<audio id="bgm" src="music.mp3" loop preload="none"></audio>
 <div id="lb" role="dialog" aria-modal="true" aria-label="Certificate viewer" aria-hidden="true">
   <button class="lb-x" type="button" aria-label="Close">&times;</button>
   <button class="lb-nav prev" type="button" aria-label="Previous certificate">&larr;</button>
@@ -586,7 +582,7 @@ section.tear.torn-done{clip-path:none}
   <span class="sticker d3" style="bottom:-6px;left:2%;width:46px;height:46px;color:var(--yellow);transform:rotate(-14deg)" aria-hidden="true"><svg width="100%" height="100%"><use href="#ic-star"/></svg></span>
   <span class="sticker" style="bottom:-6px;right:2%;width:50px;height:50px;color:var(--red);transform:rotate(12deg)" aria-hidden="true"><svg width="100%" height="100%"><use href="#ic-bolt"/></svg></span>
   <span class="sticker d2" style="top:-10px;left:50%;width:37px;height:43px;color:var(--red);transform:translateX(-50%) rotate(-5deg)" aria-hidden="true"><svg width="100%" height="100%"><use href="#ic-flame"/></svg></span>
-  <div class="topbar"><span>CS Student &amp; Security Researcher</span><span><button class="toggle" id="snd" aria-pressed="false" title="Background music">Music: off</button> <button class="toggle" id="theme">Night edition</button></span></div>
+  <div class="topbar"><span>CS Student &amp; Security Researcher</span><span><button class="toggle" id="theme">Night edition</button></span></div>
 
   <h1 class="masthead distress" id="mast" aria-label="The Dhruv Times">The <span class="p">Dhruv</span> Times</h1>
   <hr class="rule">
@@ -889,119 +885,9 @@ section.tear.torn-done{clip-path:none}
   ['.cols','.stats','.class','.grid-poster','#about .term'].forEach(function(s){ if(s==='#about .term'){var t=$(s);if(t){t.classList.add('st');io2.observe(t)}} else stagger(s) });
   $$('.ransom span:not(.sep)').forEach(function(n,k){n.style.setProperty('--j',k)});
 
-  // 14 lo-fi newsroom radio + soft effects (all synthesized live with Web Audio, off by default)
+  // sound removed: silent stub so existing calls (stamp, crossword, stickers) stay harmless
   var root2=document.documentElement;
-  var sfx=(function(){
-    var on=false,ctx=null,out=null,musicBus=null,fxBus=null,crackle=null,timer=0,step=0,bar=0,nextT=0,mel=3,nbuf=null;
-    try{on=localStorage.getItem('sound')==='on'}catch(e){}
-    var BPM=72, E=60/BPM/2; // eighth-note length
-    // Fmaj9 - Em7 - Dm9 - Cmaj9, mellow voicings
-    var CH=[[53,57,60,64,67],[52,55,59,62,67],[50,53,57,60,64],[48,52,55,59,62]], ROOT=[41,40,38,36];
-    var SCALE=[69,72,74,76,79,81,84];
-    function mtof(m){return 440*Math.pow(2,(m-69)/12)}
-    function ac(){
-      if(!ctx){
-        ctx=new (window.AudioContext||window.webkitAudioContext)();
-        out=ctx.createGain();out.gain.value=0;
-        var warm=ctx.createBiquadFilter();warm.type='lowpass';warm.frequency.value=2600;warm.Q.value=.4;
-        var comp=ctx.createDynamicsCompressor();comp.threshold.value=-20;comp.ratio.value=3;
-        out.connect(warm);warm.connect(comp);comp.connect(ctx.destination);
-        var len=Math.floor(ctx.sampleRate*2.6),ir=ctx.createBuffer(2,len,ctx.sampleRate);
-        for(var ch=0;ch<2;ch++){var d=ir.getChannelData(ch);for(var i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3)}
-        var verb=ctx.createConvolver();verb.buffer=ir;var vg=ctx.createGain();vg.gain.value=.3;verb.connect(vg);vg.connect(out);
-        musicBus=ctx.createGain();musicBus.connect(out);musicBus.connect(verb);
-        fxBus=ctx.createGain();fxBus.gain.value=.45;fxBus.connect(ctx.destination);
-        nbuf=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);var nd=nbuf.getChannelData(0);for(var j=0;j<nd.length;j++)nd[j]=Math.random()*2-1;
-      }
-      if(ctx.state==='suspended')ctx.resume();
-      return ctx;
-    }
-    function env(g,t,a,peak,dur){g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+dur)}
-    function nz(t,dur,type,freq,q,gain,bus){
-      var src=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
-      src.buffer=nbuf;src.loop=true;f.type=type;f.frequency.value=freq;f.Q.value=q;env(g,t,.005,gain,dur);
-      src.connect(f);f.connect(g);g.connect(bus);src.start(t,Math.random()*.5);src.stop(t+dur+.05);
-    }
-    function keys(m,t,dur,vel){ // soft electric piano
-      var f=mtof(m),g=ctx.createGain(),o1=ctx.createOscillator(),o2=ctx.createOscillator(),g2=ctx.createGain(),lp=ctx.createBiquadFilter();
-      o1.type='sine';o2.type='triangle';o1.frequency.value=f;o2.frequency.value=f*2.002;g2.gain.value=.16;
-      lp.type='lowpass';lp.frequency.setValueAtTime(2000,t);lp.frequency.exponentialRampToValueAtTime(650,t+dur);
-      g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vel,t+.02);g.gain.exponentialRampToValueAtTime(vel*.4,t+.7);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-      o1.connect(g);o2.connect(g2);g2.connect(g);g.connect(lp);lp.connect(musicBus);
-      o1.start(t);o2.start(t);o1.stop(t+dur+.05);o2.stop(t+dur+.05);
-    }
-    function bass(m,t,dur){
-      var o=ctx.createOscillator(),g=ctx.createGain(),lp=ctx.createBiquadFilter();o.type='sine';o.frequency.value=mtof(m);
-      lp.type='lowpass';lp.frequency.value=420;env(g,t,.03,.26,dur);o.connect(g);g.connect(lp);lp.connect(out);o.start(t);o.stop(t+dur+.05);
-    }
-    function kick(t,v){
-      var o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(115,t);o.frequency.exponentialRampToValueAtTime(42,t+.16);
-      env(g,t,.004,v,.32);o.connect(g);g.connect(out);o.start(t);o.stop(t+.35);
-    }
-    function sched(s,t0){
-      var t=t0+(s%2?E*.22:0), c=bar%4, hum=function(){return (Math.random()-.5)*.012};
-      nz(t+hum(),.05,'highpass',7200,.7,s%2?.022:.012,out);            // brushed hats
-      if(s===0){CH[c].forEach(function(m,k){keys(m,t+k*.028,E*8*.96,.055)});bass(ROOT[c],t,E*3.2);kick(t,.42)}
-      if(s===3&&Math.random()<.5)kick(t,.22);
-      if(s===4){bass(ROOT[c]+7,t,E*2.6);kick(t,.34)}
-      if(s===2||s===6)nz(t+hum(),.2,'bandpass',1900,.6,.05,musicBus);  // soft brush snare
-      if(s===6&&Math.random()<.45)CH[c].slice(1,4).forEach(function(m,k){keys(m+12,t+k*.03,E*1.8,.025)});
-      if(s!==0&&bar%8<6&&Math.random()<.3){                              // lazy melody, random walk
-        mel=Math.max(0,Math.min(SCALE.length-1,mel+[-2,-1,-1,1,1,2][Math.random()*6|0]));
-        keys(SCALE[mel],t,E*1.9,.045);
-      }
-    }
-    function tick(){
-      var look=document.hidden?1.6:.3;
-      if(nextT<ctx.currentTime-.1)nextT=ctx.currentTime+.05;
-      while(nextT<ctx.currentTime+look){sched(step,nextT);nextT+=E;step=(step+1)%8;if(!step)bar++}
-    }
-    function startCrackle(){
-      var len=ctx.sampleRate*4,b=ctx.createBuffer(1,len,ctx.sampleRate),d=b.getChannelData(0);
-      for(var i=0;i<len;i++){d[i]=(Math.random()*2-1)*.025;if(Math.random()<.00035)d[i]=(Math.random()*2-1)*.9}
-      var src=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();src.buffer=b;src.loop=true;f.type='bandpass';f.frequency.value=2400;f.Q.value=.5;g.gain.value=.35;
-      src.connect(f);f.connect(g);g.connect(out);src.start();return src;
-    }
-    function startMusic(){
-      ac();if(timer)return;
-      nextT=ctx.currentTime+.12;step=0;bar=0;timer=setInterval(tick,50);crackle=startCrackle();
-      out.gain.cancelScheduledValues(ctx.currentTime);out.gain.setTargetAtTime(.8,ctx.currentTime,.9);
-      root2.classList.add('playing');
-    }
-    function stopMusic(){
-      root2.classList.remove('playing');
-      if(!ctx||!timer)return;
-      out.gain.cancelScheduledValues(ctx.currentTime);out.gain.setTargetAtTime(0,ctx.currentTime,.25);
-      var tm=timer,ck=crackle;timer=0;crackle=null;
-      setTimeout(function(){clearInterval(tm);if(ck)ck.stop()},1200);
-    }
-    var api={
-      get on(){return on},
-      set:function(v){on=v},
-      wake:function(){},
-      clack:function(){if(!on)return;ac();nz(ctx.currentTime,.03,'bandpass',3000+Math.random()*900,1.2,.14,fxBus)},
-      pick:function(){if(!on)return;ac();nz(ctx.currentTime,.06,'bandpass',1100,.8,.1,fxBus)},
-      rustle:function(){},
-      thunk:function(){if(!on)return;ac();var t=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';
-        o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(48,t+.2);env(g,t,.004,.45,.28);o.connect(g);g.connect(fxBus);o.start(t);o.stop(t+.3)}
-    };
-    return api;
-  })();
-  var sndB=$('#snd');
-  // background music: plays music.mp3 from the site folder (no visible player), with a gentle fade
-  var bgm=$('#bgm'),fadeT=0,MAXV=.55;
-  function toast(msg){var t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove()},3200)}
-  function fade(to,done){clearInterval(fadeT);fadeT=setInterval(function(){var v=bgm.volume+(to>bgm.volume?.05:-.05);
-    if((to>bgm.volume&&v>=to)||(to<=bgm.volume&&v<=to)){bgm.volume=Math.max(0,Math.min(1,to));clearInterval(fadeT);if(done)done()}else bgm.volume=Math.max(0,Math.min(1,v))},60)}
-  function sndUI(){var o=!bgm.paused;sndB.innerHTML=o?'Music: on &#9835;':'Music: off';sndB.setAttribute('aria-pressed',o);root2.classList.toggle('playing',o)}
-  function musicSet(v){
-    if(v){bgm.volume=0;var pr=bgm.play();
-      if(pr&&pr.then)pr.then(function(){fade(MAXV);sfx.set(true);sndUI()}).catch(function(){sndUI();toast('Music file not found. Add music.mp3 to the site folder.')});}
-    else fade(0,function(){bgm.pause();sfx.set(false);sndUI()});
-  }
-  bgm.addEventListener('error',function(){sndUI()});
-  sfx.set(false);sndUI();
-  sndB.addEventListener('click',function(){musicSet(bgm.paused)});
+  var sfx={on:false,set:function(){},wake:function(){},clack:function(){},pick:function(){},rustle:function(){},thunk:function(){}};
 
   // scroll-linked: sticker parallax + drag, fold-out page, film reel
   var stk=$$('.sticker').map(function(el,k){return {el:el,par:el.parentElement,f:el.dataset.np?0:(0.05+(k%4)*0.025)*(k%2?-1:1),py:0,dx:0,dy:0,vx:0,vy:0,flag:el.dataset.flag?$('#'+el.dataset.flag):null}}), ticking=false;
