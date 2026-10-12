@@ -16,7 +16,8 @@
 :root[data-theme="night"]{--paper:#1c1a1e; --ink:#e7dfd0; --purple:#b48fd0; --muted:#b5ab9b; --noise:.25; --tint:rgba(180,143,208,.14); --red:#d9695d; --yellow:#e8c05a; --green:#6fbf86}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:60px}
-body{font-family:var(--serif);color:var(--ink);line-height:1.6;background:var(--paper);overflow-x:hidden;transition:background .5s,color .5s}
+html{overflow-x:hidden}
+body{font-family:var(--serif);color:var(--ink);line-height:1.6;background:var(--paper);overflow-x:clip;transition:background .5s,color .5s}
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:var(--noise);
   background:
    radial-gradient(ellipse at 20% 10%,rgba(255,255,255,.3),transparent 50%),
@@ -300,7 +301,7 @@ footer{text-align:center;font-family:var(--type);font-size:.8rem;letter-spacing:
 @keyframes blot{to{scale:1}}
 
 /* 2 fold-out front page */
-.grid-poster{position:relative;transform-origin:50% 0;transform:perspective(1400px) rotateX(calc(var(--fold,0) * 72deg))}
+.grid-poster{position:relative;transform-origin:50% 0;transform:perspective(1400px) rotateX(calc(var(--fold,0) * -72deg))}
 .grid-poster::after{content:"";position:absolute;inset:-12px;pointer-events:none;z-index:5;opacity:var(--fold,0);background:linear-gradient(to bottom,rgba(0,0,0,.45),rgba(0,0,0,.05) 45%,transparent 50%,rgba(0,0,0,.25) 52%,transparent 60%)}
 
 /* 3 redacted text */
@@ -508,6 +509,23 @@ section.tear.torn-done{clip-path:none}
   .lb-in{grid-template-columns:1fr;gap:18px}.lb-img{max-height:56vh}.lb-cap{rotate:0deg}
   .lb-x,.lb-nav{position:fixed}.lb-nav{top:auto;bottom:14px;margin-top:0}
   #lb{padding-bottom:84px}.lb-nav.prev{left:calc(50% - 56px)}.lb-nav.next{right:calc(50% - 56px)}
+}
+
+/* ===== phone polish ===== */
+@media(max-width:700px){
+  .cols,.cols p,.st-body p{text-align:left;hyphens:manual}
+  .sec-title{font-size:clamp(1.35rem,6.8vw,1.8rem);gap:10px}
+  .sec-title::after{min-width:24px}
+  .hero{padding:0 16px}
+  .toggle{padding:5px 10px;min-height:32px}
+  .psst{padding:8px 6px}
+  .dateline{flex-direction:column;align-items:center;text-align:center;gap:1px;font-size:.68rem;letter-spacing:.08em;padding:6px 4px}
+  .stats{grid-template-columns:1fr 1fr}
+  .stat{border-right:0;border-bottom:1px solid var(--ink)}
+  .stat:nth-child(odd){border-right:1px solid var(--ink)}
+  .stat:nth-last-child(-n+2){border-bottom:0}
+  .letters{padding:18px}
+  .grid{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){#story,#story.on{transition:none}.grid-poster{transform:none}.grid-poster::after{display:none}section.tear{clip-path:none!important}.frame-wrap{rotate:-2.2deg;translate:none}*{animation:none!important;transition:none!important}.rv,.masthead .l,.rv .sec-title,.st{opacity:1;transform:none;translate:none;scale:none}.rv .sec-title::after{transform:none}.tl::before{transform:none}.ev::before{scale:1;opacity:1}#intro{display:none}}
 </style>
@@ -1298,15 +1316,15 @@ section.tear.torn-done{clip-path:none}
   var baseTitle=document.title;
   var retAnchor='#projects';
   function openStory(id){
-    retAnchor='#projects';renderStory(id);sv.scrollTop=0;sv.classList.add('on');sv.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';sfx.rustle();
+    retAnchor='#projects';renderStory(id);sv.scrollTop=0;sv.classList.add('on');sv.setAttribute('aria-hidden','false');document.documentElement.style.overflow='hidden';sfx.rustle();
     setTimeout(function(){$('.st-back').focus({preventScroll:true})},50);
   }
   function closeStory(){
     if(!sv.classList.contains('on'))return;
-    sv.classList.remove('on');sv.setAttribute('aria-hidden','true');document.body.style.overflow='';document.title=baseTitle;
+    sv.classList.remove('on');sv.setAttribute('aria-hidden','true');document.documentElement.style.overflow='';document.title=baseTitle;
   }
   function openCerts(f){
-    retAnchor='#certs';renderCerts(f);sv.scrollTop=0;sv.classList.add('on');sv.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';sfx.rustle();
+    retAnchor='#certs';renderCerts(f);sv.scrollTop=0;sv.classList.add('on');sv.setAttribute('aria-hidden','false');document.documentElement.style.overflow='hidden';sfx.rustle();
     setTimeout(function(){$('.st-back').focus({preventScroll:true})},50);
   }
   function routeStory(){var h=location.hash,m=h.match(/^#story\/(\w+)/),c=h.match(/^#certificates(?:\/(\w+))?$/);
