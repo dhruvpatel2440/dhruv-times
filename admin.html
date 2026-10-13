@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Newsroom | The Dhruv Times admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#e8e1d4;--card:#f4eddc;--ink:#1d1a18;--purple:#5a3d6b;--muted:#5a534b;--red:#a8352a;--green:#3c6e4a;--yellow:#d9a52b;
+  --serif:'Old Standard TT',Georgia,serif;--display:'Abril Fatface',Georgia,serif;--type:'Special Elite',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--serif);background:var(--paper);color:var(--ink);line-height:1.5;min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 80px}
+.mast{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:4px double var(--ink);padding-bottom:10px;margin-bottom:18px}
+.mast h1{font-family:var(--display);font-weight:400;font-size:clamp(1.6rem,5vw,2.4rem);line-height:1;text-transform:uppercase}
+.mast h1 span{color:var(--purple)}
+.mast .who{font-family:var(--type);font-size:.78rem;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{font-family:var(--type);text-transform:uppercase;letter-spacing:.08em;font-size:.78rem;background:var(--ink);color:var(--card);border:2px solid var(--ink);padding:7px 14px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--purple);border-color:var(--purple)}
+.btn.alt{background:transparent;color:var(--ink)}.btn.alt:hover{color:var(--card)}
+.btn.danger{background:var(--red);border-color:var(--red)}
+.btn.small{padding:3px 9px;font-size:.7rem}
+.btn:disabled{opacity:.5;cursor:wait}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.tabs button{font-family:var(--type);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;background:none;border:1.5px solid var(--ink);padding:5px 12px;cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--card)}
+.panel{background:var(--card);border:2px solid var(--ink);box-shadow:6px 6px 0 rgba(0,0,0,.25);padding:18px}
+.panel h2{font-family:var(--display);font-weight:400;font-size:1.6rem;margin-bottom:4px}
+.panel .sub{font-style:italic;color:var(--muted);margin-bottom:14px}
+.rows{list-style:none;border-top:1px solid var(--ink)}
+.rows li{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--ink)}
+.rows li .t{flex:1;min-width:0}
+.rows li .t b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rows li .t small{font-family:var(--type);font-size:.7rem;color:var(--muted)}
+.rows li .acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-family:var(--type);font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;padding:1px 6px;border:1px solid var(--red);color:var(--red);margin-left:6px;vertical-align:middle}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}
+form.ed{display:grid;gap:14px}
+.f label{display:block;font-family:var(--type);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:4px}
+.f input[type=text],.f input[type=email],.f input[type=password],.f input[type=url],.f select,.f textarea{width:100%;background:#fffaf0;border:1.5px solid var(--ink);padding:8px 10px;border-radius:0}
+.f textarea{min-height:90px;resize:vertical;font-family:var(--serif)}
+.f textarea.tall{min-height:320px;font-family:ui-monospace,Consolas,monospace;font-size:.88rem}
+.f .help{font-size:.82rem;color:var(--muted);margin-top:4px}
+.f .err{color:var(--red);font-size:.85rem;margin-top:4px}
+.f.check label{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:.8rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.img-prev{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.img-prev img{max-width:180px;max-height:110px;border:1.5px solid var(--ink);background:#ddd}
+.login{max-width:380px;margin:8vh auto}
+.login p{margin-bottom:12px}
+.toast{position:fixed;left:50%;bottom:20px;translate:-50% 0;z-index:9;background:var(--ink);color:var(--card);font-family:var(--type);font-size:.8rem;padding:9px 16px;border:2px solid var(--card);box-shadow:4px 4px 0 var(--purple);max-width:calc(100vw - 24px)}
+.toast.bad{background:var(--red)}
+.note{font-family:var(--type);font-size:.78rem;background:#fffaf0;border:1px dashed var(--ink);padding:10px;margin-bottom:14px}
+.log{font-family:var(--type);font-size:.78rem}
+.log li{padding:4px 0;border-bottom:1px dotted var(--ink)}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}.rows li{flex-wrap:wrap}.rows li .acts{width:100%;justify-content:flex-start}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast"><h1>The Dhruv Times <span>Newsroom</span></h1><div class="who" id="who"></div></header>
+  <main id="app" aria-live="polite"><p>Loading the newsroom&hellip;</p></main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js" integrity="sha384-0w2KAL2YHP6wKOkUDzkCDGgVvfmHnj02DHeQ6XcHOgTfFsGyonKOpShMH1x6nk9o" crossorigin="anonymous"></script>
+<script src="config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
